@@ -168,7 +168,10 @@ sub process {
 
 sub include_path {
     my($self, $value) = @_;
-    if ( 'ARRAY' eq ref $value ) {
+    if ( !$value ) {
+        $self->{include_path} = [];
+    }
+    elsif ( 'ARRAY' eq ref $value ) {
         $self->{include_path} = $value;
     }
     else {
