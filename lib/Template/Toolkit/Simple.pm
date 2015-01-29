@@ -176,7 +176,7 @@ sub config {
     my $self = shift;
     $self = {
         %$self,
-        $self->_file_to_hash(@_)
+        %{ $self->_file_to_hash(@_) }
     };
     return $self;
 }
