@@ -73,11 +73,11 @@ sub field {
 
 {
     for my $name (keys %$default) {
-        next if $name =~ /^(data|config)/;
+        next if $name =~ /^(data|config|include_path)/;
         my $value = $default->{$name};
         if (defined $value) {
             $value = 1 - $value if $value =~/^[01]$/;
-            $value = [] if $name eq 'include_path';
+            # $value = [] if $name eq 'include_path';
         }
         no strict 'refs';
         *{__PACKAGE__ . '::' . $name} = field($name, $value);
@@ -164,6 +164,21 @@ sub process {
     );
 
     return $self->{tt}->process(@_);
+}
+
+sub include_path {
+    my($self, $value) = @_;
+    if ( 'ARRAY' eq ref $value ) {
+        $self->{include_path} = $value;
+    }
+    else {
+        no warnings 'uninitialized';
+        if ( 'ARRAY' ne ref $self->{include_path} ) {
+            $value = $self->{include_path} . $self->{delimiter} . $value;
+            $self->{include_path} = [];
+        }
+        push @{ $self->{include_path} } grep { /\S/ } split /\Q$self->{delimiter}/, $value;
+    }
 }
 
 sub data {
